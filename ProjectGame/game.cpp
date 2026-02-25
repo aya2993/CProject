@@ -8,7 +8,7 @@ float arenaHalfSizeX = 85, arenaHalfSizeY = 45;
 
 //player 1 variables
 float player1PY, player1DpY;
-float player1PX, player1DpX;
+float player1PX = 80, player1DpX;
 
 //player 2 variables
 float player2PY, player2DpY;
@@ -66,8 +66,8 @@ internal void simulateGame(Input* input, float dt) {
 	float player2DdpY = 0.f;
 	//float player2DdpX = 0.f;
 
-	if (isDown(Button_W)) player2DdpY += 750;
-	if (isDown(Button_S)) player2DdpY -= 750;
+	if (isDown(Button_W)) player2DdpY += 1000;
+	if (isDown(Button_S)) player2DdpY -= 1000;
 
 	player2DdpY -= player2DpY * 15.f;
 	//player2DdpX -= player2DpX * 15.f;
