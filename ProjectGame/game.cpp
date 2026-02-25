@@ -14,6 +14,9 @@ float player1PX = 80, player1DpX;
 float player2PY, player2DpY;
 float player2PX, player2DpX;
 
+//Ball movement variables
+float ballPX, ballPY, ballDpX = 100, ballDpY, ballHalfSize = 1.f;
+
 
 internal void simulateGame(Input* input, float dt) {
 	clearScreen(0xE491A6);
@@ -43,20 +46,20 @@ internal void simulateGame(Input* input, float dt) {
 	// collision for player 1
 	if (player1PY + playerHalfSizeY > arenaHalfSizeY) {
 		player1PY = arenaHalfSizeY - playerHalfSizeY;
-		player1DpY = 0;
+		player1DpY *= -1;
 	}
 	else if (player1PY - playerHalfSizeY < -arenaHalfSizeY) {
 		player1PY = -arenaHalfSizeY + playerHalfSizeY;
-		player1DpY = 0;
+		player1DpY *= -1;
 	}
 
 	if (player1PX + playerHalfSizeX > arenaHalfSizeX) {
 		player1PX = arenaHalfSizeX - playerHalfSizeX;
-		player1DpX = 0;
+		player1DpX *= -1;
 	}
 	else if (player1PX - playerHalfSizeX < -arenaHalfSizeX) {
 		player1PX = -arenaHalfSizeX + playerHalfSizeX;
-		player1DpX = 0;
+		player1DpX *= -1;
 	}
 
 
@@ -78,15 +81,38 @@ internal void simulateGame(Input* input, float dt) {
 	//collision for player 2 (fixed)
 	if (player2PY + playerHalfSizeY > arenaHalfSizeY) {
 		player2PY = arenaHalfSizeY - playerHalfSizeY;
-		player2DpY = 0;
+		player2DpY *= -1;
 	}
 	else if (player2PY - playerHalfSizeY < -arenaHalfSizeY) {
 		player2PY = -arenaHalfSizeY + playerHalfSizeY;
-		player2DpY = 0;
+		player2DpY *= -1;
 	}
+
+	//ball movement
+	drawRect(ballPX, ballPY, 1, 1, 0x00ff00);
+	ballPX += ballDpX * dt;
+	ballPY += ballDpY * dt;
+
+	if (ballPX + ballHalfSize > player1PX - playerHalfSizeX &&
+		ballPX - ballHalfSize < player1PX + playerHalfSizeX &&
+		ballPY + ballHalfSize > player1PY - playerHalfSizeY &&
+		ballPY + ballHalfSize < player1PY + playerHalfSizeY) {
+
+		ballPX = player1PX - playerHalfSizeX - ballHalfSize;
+		ballDpX *= -1;
+	}
+	else if (ballPX + ballHalfSize > -80 - playerHalfSizeX &&
+			ballPX - ballHalfSize < -80 + playerHalfSizeX &&
+			ballPY + ballHalfSize > player2PY - playerHalfSizeY &&
+			ballPY + ballHalfSize < player2PY + playerHalfSizeY) {
+
+		ballPX = -80 + playerHalfSizeX + ballHalfSize;
+		ballDpX *= -1;
+	}
+
 
 	//draw players
 	drawRect(player1PX, player1PY, playerHalfSizeX, playerHalfSizeY, 0x450C1B);
 	drawRect(-80, player2PY, playerHalfSizeX, playerHalfSizeY, 0x450C1B);
-	drawRect(0, 0, 1, 1, 0x00ff00);
+	
 }
