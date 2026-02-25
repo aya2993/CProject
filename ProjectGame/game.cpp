@@ -17,6 +17,8 @@ float player2PX, player2DpX;
 //Ball movement variables
 float ballPX, ballPY, ballDpX = 100, ballDpY, ballHalfSize = 1.f;
 
+//score variables
+int player1Score, player2Score;
 
 /*internal void simulatePlayer(float* pX, float* pY, float* dp, float ddpX, float ddpY, float dt) {
 	ddpY -= player1DpY * 15.f;
@@ -57,6 +59,7 @@ internal void simulateGame(Input* input, float dt) {
 	//player 1 movement 
 	float player1DdpY = 0.f; 
 	float player1DdpX = 0.f;
+
 
 	if (isDown(Button_Up)) player1DdpY += 1000;
 	if (isDown(Button_Down)) player1DdpY -= 1000;
@@ -101,9 +104,16 @@ internal void simulateGame(Input* input, float dt) {
 	float player2DdpY = 0.f;
 	//float player2DdpX = 0.f;
 
+#if 0
 	if (isDown(Button_W)) player2DdpY += 1000;
 	if (isDown(Button_S)) player2DdpY -= 1000;
-
+#else 
+	//if (ballPY > player2PY) player2DdpY += 1000;
+	//else if (ballPY < player2PY) player2DdpY -= 1000;
+	player2DdpY += (ballPY - player2PY) * 200.f;
+	if (player1DdpY > 1300) player1DdpY = 1300;
+	else if (player1DdpY < -1300) player1DdpY = -1300;
+#endif
 	player2DdpY -= player2DpY * 15.f;
 	//player2DdpX -= player2DpX * 15.f;
 
@@ -121,7 +131,7 @@ internal void simulateGame(Input* input, float dt) {
 	}
 
 	//ball movement
-	drawRect(ballPX, ballPY, 1, 1, 0x00ff00);
+	drawRect(ballPX, ballPY, 2, 2, 0x00ff00);
 	ballPX += ballDpX * dt;
 	ballPY += ballDpY * dt;
 
@@ -160,12 +170,27 @@ internal void simulateGame(Input* input, float dt) {
 		ballDpY = 0;
 		ballPX = 0;
 		ballPY = 0;
+		player1Score++;
 	}
 	else if (ballPX - ballHalfSize < -arenaHalfSizeX) {
 		ballDpX *= -1;
 		ballDpY = 0;
 		ballPX = 0;
 		ballPY = 0;
+		player2Score++;
+	}
+
+	//draw score
+	float atX = -80;
+	for (int i = 0; i < player1Score; i++){
+		drawRect(atX, 47.f, 1, 1 , 0x450C1B);
+		atX += 2.5;
+	}
+
+	atX = 80;
+	for (int i = 0; i < player2Score; i++) {
+		drawRect(atX, 47.f, 1, 1, 0x450C1B);
+		atX -= 2.5;
 	}
 
 	//draw players
