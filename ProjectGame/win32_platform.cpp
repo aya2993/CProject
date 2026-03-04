@@ -110,6 +110,10 @@ input.buttons[b].changed = true;\
 
 					process_button(Button_W, 'W');
 					process_button(Button_S, 'S');
+					process_button(Button_A, 'A');
+					process_button(Button_D, 'D');
+
+					process_button(Button_Enter, VK_RETURN);
 				}
 			}break;
 

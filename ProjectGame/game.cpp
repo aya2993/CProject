@@ -12,7 +12,7 @@ float player1PX = 80, player1DpX;
 
 //player 2 variables
 float player2PY, player2DpY;
-float player2PX, player2DpX;
+float player2PX = -80 , player2DpX;
 
 //Ball movement variables
 float ballPX, ballPY, ballDpX = 100, ballDpY, ballHalfSize = 1.f;
@@ -20,181 +20,200 @@ float ballPX, ballPY, ballDpX = 100, ballDpY, ballHalfSize = 1.f;
 //score variables
 int player1Score, player2Score;
 
-/*internal void simulatePlayer(float* pX, float* pY, float* dp, float ddpX, float ddpY, float dt) {
-	ddpY -= player1DpY * 15.f;
-	ddpX -= player1DpX * 15.f;
+//Menu variables
+enum GameMode {
+	GM_Menu,
+	GM_Game,
+};
 
-
-	player1PY = player1PY + player1DpY * dt + player1DdpY * dt * dt * .5f;
-	player1DpY = player1DpY + player1DdpY * dt;
-
-	player1PX = player1PX + player1DpX * dt + player1DdpX * dt * dt * .5f;
-	player1DpX = player1DpX + player1DdpX * dt;
-
-	// collision for player 1
-	if (player1PY + playerHalfSizeY > arenaHalfSizeY) {
-		player1PY = arenaHalfSizeY - playerHalfSizeY;
-		player1DpY *= -1;
-	}
-	else if (player1PY - playerHalfSizeY < -arenaHalfSizeY) {
-		player1PY = -arenaHalfSizeY + playerHalfSizeY;
-		player1DpY *= -1;
-	}
-
-	if (player1PX + playerHalfSizeX > arenaHalfSizeX) {
-		player1PX = arenaHalfSizeX - playerHalfSizeX;
-		player1DpX *= -1;
-	}
-	else if (player1PX - playerHalfSizeX < -arenaHalfSizeX) {
-		player1PX = -arenaHalfSizeX + playerHalfSizeX;
-		player1DpX *= -1;
-	}
-}*/
+GameMode currentGameMode;
+int hotButton;
+bool enemyIsAI;
 
 internal void simulateGame(Input* input, float dt) {
-	clearScreen(0xE491A6);
-	drawRect(0, 0, arenaHalfSizeX, arenaHalfSizeY, 0xA2CB8B);
+	clearScreen(COLOR1);
+	drawRect(0, 0, arenaHalfSizeX, arenaHalfSizeY, COLOR2);
+
+	if (currentGameMode == GM_Game) {
+		//player 1 movement 
+		float player1DdpY = 0.f;
+		float player1DdpX = 0.f;
 
 
-	//player 1 movement 
-	float player1DdpY = 0.f; 
-	float player1DdpX = 0.f;
+		if (isDown(Button_Up)) player1DdpY += 1000;
+		if (isDown(Button_Down)) player1DdpY -= 1000;
+		if (isDown(Button_Left)) player1DdpX -= 1000;
+		if (isDown(Button_Right)) player1DdpX += 1000;
+
+		//
+			//wiederstand
+		player1DdpY -= player1DpY * 15.f;
+		player1DdpX -= player1DpX * 15.f;
 
 
-	if (isDown(Button_Up)) player1DdpY += 1000;
-	if (isDown(Button_Down)) player1DdpY -= 1000;
-	if (isDown(Button_Left)) player1DdpX -= 1000;
-	if (isDown(Button_Right)) player1DdpX += 1000;
+		player1PY = player1PY + player1DpY * dt + player1DdpY * dt * dt * .5f;
+		player1DpY = player1DpY + player1DdpY * dt;
 
-//
-	//wiederstand
-	player1DdpY -= player1DpY * 15.f;
-	player1DdpX -= player1DpX * 15.f;
+		player1PX = player1PX + player1DpX * dt + player1DdpX * dt * dt * .5f;
+		player1DpX = player1DpX + player1DdpX * dt;
 
+		// collision for player 1
+		if (player1PY + playerHalfSizeY > arenaHalfSizeY) {
+			player1PY = arenaHalfSizeY - playerHalfSizeY;
+			player1DpY *= -1;
+		}
+		else if (player1PY - playerHalfSizeY < -arenaHalfSizeY) {
+			player1PY = -arenaHalfSizeY + playerHalfSizeY;
+			player1DpY *= -1;
+		}
 
-	player1PY = player1PY + player1DpY * dt + player1DdpY * dt * dt * .5f;
-	player1DpY = player1DpY + player1DdpY * dt;
-
-	player1PX = player1PX + player1DpX * dt + player1DdpX * dt * dt * .5f;
-	player1DpX = player1DpX + player1DdpX * dt;
-
-	// collision for player 1
-	if (player1PY + playerHalfSizeY > arenaHalfSizeY) {
-		player1PY = arenaHalfSizeY - playerHalfSizeY;
-		player1DpY *= -1;
-	}
-	else if (player1PY - playerHalfSizeY < -arenaHalfSizeY) {
-		player1PY = -arenaHalfSizeY + playerHalfSizeY;
-		player1DpY *= -1;
-	}
-
-	if (player1PX + playerHalfSizeX > arenaHalfSizeX) {
-		player1PX = arenaHalfSizeX - playerHalfSizeX;
-		player1DpX *= -1;
-	}
-	else if (player1PX - playerHalfSizeX < -arenaHalfSizeX) {
-		player1PX = -arenaHalfSizeX + playerHalfSizeX;
-		player1DpX *= -1;
-	}
-//
+		if (player1PX + playerHalfSizeX > arenaHalfSizeX) {
+			player1PX = arenaHalfSizeX - playerHalfSizeX;
+			player1DpX *= -1;
+		}
+		else if (player1PX - playerHalfSizeX < -arenaHalfSizeX) {
+			player1PX = -arenaHalfSizeX + playerHalfSizeX;
+			player1DpX *= -1;
+		}
+		//
 
 
-	//player 2 movement
+			//player 2 movement
 
-	float player2DdpY = 0.f;
-	//float player2DdpX = 0.f;
+		float player2DdpY = 0.f;
+		float player2DdpX = 0.f;
 
-#if 0
-	if (isDown(Button_W)) player2DdpY += 1000;
-	if (isDown(Button_S)) player2DdpY -= 1000;
-#else 
-	//if (ballPY > player2PY) player2DdpY += 1000;
-	//else if (ballPY < player2PY) player2DdpY -= 1000;
-	player2DdpY += (ballPY - player2PY) * 200.f;
-	if (player1DdpY > 1300) player1DdpY = 1300;
-	else if (player1DdpY < -1300) player1DdpY = -1300;
-#endif
-	player2DdpY -= player2DpY * 15.f;
-	//player2DdpX -= player2DpX * 15.f;
+		if (enemyIsAI == 0) {
+			if (isDown(Button_W)) player2DdpY += 1000;
+			if (isDown(Button_S)) player2DdpY -= 1000;
+			if (isDown(Button_A)) player2DdpX -= 1000;
+			if (isDown(Button_D)) player2DdpX += 1000;
+		}
+		else {
+			//if (ballPY > player2PY) player2DdpY += 1000;
+			//else if (ballPY < player2PY) player2DdpY -= 1000;
+			player2DdpY += (ballPY - player2PY) * 200.f;
+			if (player1DdpY > 1300) player1DdpY = 1300;
+			else if (player1DdpY < -1300) player1DdpY = -1300;
+		}
+		player2DdpY -= player2DpY * 15.f;
+		player2DdpX -= player2DpX * 15.f;
 
-	player2PY = player2PY + player2DpY * dt + player2DdpY * dt * dt * .5f;
-	player2DpY = player2DpY + player2DdpY * dt;
+		player2PY = player2PY + player2DpY * dt + player2DdpY * dt * dt * .5f;
+		player2DpY = player2DpY + player2DdpY * dt;
 
-	//collision for player 2 (fixed)
-	if (player2PY + playerHalfSizeY > arenaHalfSizeY) {
-		player2PY = arenaHalfSizeY - playerHalfSizeY;
-		player2DpY *= -1;
-	}
-	else if (player2PY - playerHalfSizeY < -arenaHalfSizeY) {
-		player2PY = -arenaHalfSizeY + playerHalfSizeY;
-		player2DpY *= -1;
-	}
+		player2PX = player2PX + player2DpX * dt + player2DdpX * dt * dt * .5f;
+		player2DpX = player2DpX + player2DdpX * dt;
 
-	//ball movement
-	drawRect(ballPX, ballPY, 2, 2, 0x00ff00);
-	ballPX += ballDpX * dt;
-	ballPY += ballDpY * dt;
+		//collision for player 2 (fixed)
+		if (player2PY + playerHalfSizeY > arenaHalfSizeY) {
+			player2PY = arenaHalfSizeY - playerHalfSizeY;
+			player2DpY *= -1;
+		}
+		else if (player2PY - playerHalfSizeY < -arenaHalfSizeY) {
+			player2PY = -arenaHalfSizeY + playerHalfSizeY;
+			player2DpY *= -1;
+		}
 
-	if (ballPX + ballHalfSize > player1PX - playerHalfSizeX &&
-		ballPX - ballHalfSize < player1PX + playerHalfSizeX &&
-		ballPY + ballHalfSize > player1PY - playerHalfSizeY &&
-		ballPY + ballHalfSize < player1PY + playerHalfSizeY) {
+		if (player2PX + playerHalfSizeX > arenaHalfSizeX) {
+			player2PX = arenaHalfSizeX - playerHalfSizeX;
+			player2DpX *= -1;
+		}
+		else if (player2PX - playerHalfSizeX < -arenaHalfSizeX) {
+			player2PX = -arenaHalfSizeX + playerHalfSizeX;
+			player2DpX *= -1;
+		}
 
-		ballPX = player1PX - playerHalfSizeX - ballHalfSize;
-		ballDpX *= -1;
-		ballDpY += (ballDpY - player1DpY) * 1.f ;
-	}
-	else if (ballPX + ballHalfSize > -80 - playerHalfSizeX &&
-			ballPX - ballHalfSize < -80 + playerHalfSizeX &&
+
+
+		//ball movement
+		drawRect(ballPX, ballPY, 2, 2, COLOR5);
+		ballPX += ballDpX * dt;
+		ballPY += ballDpY * dt;
+
+		if (ballPX + ballHalfSize > player1PX - playerHalfSizeX &&
+			ballPX - ballHalfSize < player1PX + playerHalfSizeX &&
+			ballPY + ballHalfSize > player1PY - playerHalfSizeY &&
+			ballPY + ballHalfSize < player1PY + playerHalfSizeY) {
+
+			ballPX = player1PX - playerHalfSizeX - ballHalfSize;
+			ballDpX *= -1;
+			ballDpY += (ballDpY - player1DpY) * 1.f;
+		}
+		else if (ballPX + ballHalfSize > player2PX - playerHalfSizeX &&
+			ballPX - ballHalfSize < player2PX + playerHalfSizeX &&
 			ballPY + ballHalfSize > player2PY - playerHalfSizeY &&
 			ballPY + ballHalfSize < player2PY + playerHalfSizeY) {
 
-		ballPX = -80 + playerHalfSizeX + ballHalfSize;
-		ballDpX *= -1;
-		ballDpY += (ballDpY - player1DpY) * 1.f;
-	}
+			ballPX = player2PX + playerHalfSizeX + ballHalfSize;
+			ballDpX *= -1;
+			ballDpY += (ballDpY - player1DpY) * 1.f;
+		}
 
-	//collision top and bottom
-	if (ballPY + ballHalfSize > arenaHalfSizeY) {
-		ballPY = arenaHalfSizeY - ballHalfSize;
-		ballDpY *= -1;
-	}
-	else if (ballPY - ballHalfSize < -arenaHalfSizeY) {
-		ballPY = -arenaHalfSizeY + ballHalfSize;
-		ballDpY *= -1;
-	}
+		//collision top and bottom
+		if (ballPY + ballHalfSize > arenaHalfSizeY) {
+			ballPY = arenaHalfSizeY - ballHalfSize;
+			ballDpY *= -.5;
+		}
+		else if (ballPY - ballHalfSize < -arenaHalfSizeY) {
+			ballPY = -arenaHalfSizeY + ballHalfSize;
+			ballDpY *= -.5;
+		}
 
-	//collision left and right
-	if (ballPX + ballHalfSize > arenaHalfSizeX) {
-		ballDpX *= -1;
-		ballDpY = 0;
-		ballPX = 0;
-		ballPY = 0;
-		player1Score++;
-	}
-	else if (ballPX - ballHalfSize < -arenaHalfSizeX) {
-		ballDpX *= -1;
-		ballDpY = 0;
-		ballPX = 0;
-		ballPY = 0;
-		player2Score++;
-	}
+		//collision left and right
+		if (ballPX + ballHalfSize > arenaHalfSizeX) {
+			ballDpX *= -1;
+			ballDpY = 0;
+			ballPX = 0;
+			ballPY = 0;
+			player1Score++;
+		}
+		else if (ballPX - ballHalfSize < -arenaHalfSizeX) {
+			ballDpX *= -1;
+			ballDpY = 0;
+			ballPX = 0;
+			ballPY = 0;
+			player2Score++;
+		}
 
-	//draw score
-	float atX = -80;
-	for (int i = 0; i < player1Score; i++){
-		drawRect(atX, 47.f, 1, 1 , 0x450C1B);
-		atX += 2.5;
-	}
+		//draw score
+		float atX = -80;
+		for (int i = 0; i < player1Score; i++) {
+			drawRect(atX, 47.f, 1, 1, 0x450C1B);
+			atX += 2.5;
+		}
 
-	atX = 80;
-	for (int i = 0; i < player2Score; i++) {
-		drawRect(atX, 47.f, 1, 1, 0x450C1B);
-		atX -= 2.5;
-	}
+		atX = 80;
+		for (int i = 0; i < player2Score; i++) {
+			drawRect(atX, 47.f, 1, 1, 0x450C1B);
+			atX -= 2.5;
+		}
 
-	//draw players
-	drawRect(player1PX, player1PY, playerHalfSizeX, playerHalfSizeY, 0x450C1B);
-	drawRect(-80, player2PY, playerHalfSizeX, playerHalfSizeY, 0x450C1B);
-	
+		//draw players
+		drawRect(player1PX, player1PY, playerHalfSizeX, playerHalfSizeY, COLOR3);
+		drawRect(player2PX, player2PY, playerHalfSizeX, playerHalfSizeY,  COLOR3);
+	}
+ else {
+	 //Menu
+		if (pressed(Button_Left) || pressed(Button_Right)) {
+			hotButton = !hotButton;
+		}
+
+		
+
+		if (pressed (Button_Enter)){
+			currentGameMode = GM_Game;
+			enemyIsAI = hotButton ? 0 : 1;
+		}
+		if (hotButton == 0) {
+			drawText("SINGLE PLAYER", -80, -10, 1, COLOR1);
+			drawText("MULTIPLAYER", 20, -10, 1, COLOR5);
+		}
+		else {
+			drawText("SINGLE PLAYER", -80, -10, 1, COLOR5);
+			drawText("MULTIPLAYER", 20, -10, 1, COLOR1);
+		}
+		drawText("BEST GAME EVER", -60, 40, 1.5, COLOR5);
+		
+	}
 }

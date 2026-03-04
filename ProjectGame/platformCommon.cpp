@@ -12,7 +12,10 @@ enum {
 
 	Button_W,
 	Button_S,
+	Button_A,
+	Button_D,
 	
+	Button_Enter,
 	
 	Button_Count // this should be last
 };
