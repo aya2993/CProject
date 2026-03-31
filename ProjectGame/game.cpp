@@ -2,6 +2,9 @@
 #define pressed(b) (input->buttons[b].isDown && input->buttons[b].changed)
 #define released(b) (!input->buttons[b].isDown && input->buttons[b].changed)
 
+#include <Windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 float playerHalfSizeX = 2.5, playerHalfSizeY = 12;
 float arenaHalfSizeX = 85, arenaHalfSizeY = 45;
@@ -29,6 +32,19 @@ enum GameMode {
 GameMode currentGameMode;
 int hotButton;
 bool enemyIsAI;
+
+static void playMusic(const wchar_t* filepath) {
+	// looped async playback
+	PlaySoundW(filepath, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+}
+/*static void stopMusic() {
+	// stop any PlaySound playback
+	PlaySoundW(NULL, NULL, 0);
+}*/
+static void playSfx(const wchar_t* filepath) {
+	// simple async sound effect (note: PlaySound will stop previous non-looped sound if called)
+	PlaySoundW(filepath, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
+}
 
 internal void simulateGame(Input* input, float dt) {
 	clearScreen(COLOR1);
@@ -195,13 +211,17 @@ internal void simulateGame(Input* input, float dt) {
 	}
  else {
 	 //Menu
+	 
 		if (pressed(Button_Left) || pressed(Button_Right)) {
+			
 			hotButton = !hotButton;
+			
 		}
 
 		
 
 		if (pressed (Button_Enter)){
+			playMusic(L"Theme.wav");
 			currentGameMode = GM_Game;
 			enemyIsAI = hotButton ? 0 : 1;
 		}
