@@ -1,7 +1,6 @@
 #include "utils.cpp"
 #include <Windows.h>
 
-
 global_variable bool running = true;
 
 struct RenderState{

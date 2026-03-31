@@ -31,9 +31,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\..\..\..\Downloads\Theme.mp3">
-      <Filter>Resource Files</Filter>
-    </Media>
-  </ItemGroup>
 </Project>
