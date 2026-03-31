@@ -2,6 +2,14 @@
 #define pressed(b) (input->buttons[b].isDown && input->buttons[b].changed)
 #define released(b) (!input->buttons[b].isDown && input->buttons[b].changed)
 
+#include <Windows.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
+
+
+
+
 
 float playerHalfSizeX = 2.5, playerHalfSizeY = 12;
 float arenaHalfSizeX = 85, arenaHalfSizeY = 45;
@@ -29,6 +37,19 @@ enum GameMode {
 GameMode currentGameMode;
 int hotButton;
 bool enemyIsAI;
+
+static void playMusic(const wchar_t* filepath) {
+	// looped async playback
+	PlaySoundW(filepath, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+}
+/*static void stopMusic() {
+	// stop any PlaySound playback
+	PlaySoundW(NULL, NULL, 0);
+}*/
+static void playSfx(const wchar_t* filepath) {
+	// simple async sound effect (note: PlaySound will stop previous non-looped sound if called)
+	PlaySoundW(filepath, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
+}
 
 internal void simulateGame(Input* input, float dt) {
 	clearScreen(COLOR1);
@@ -79,7 +100,6 @@ internal void simulateGame(Input* input, float dt) {
 
 
 			//player 2 movement
-
 		float player2DdpY = 0.f;
 		float player2DdpX = 0.f;
 
@@ -167,6 +187,7 @@ internal void simulateGame(Input* input, float dt) {
 			ballPX = 0;
 			ballPY = 0;
 			player1Score++;
+			//playSfx(L"point.wav");
 		}
 		else if (ballPX - ballHalfSize < -arenaHalfSizeX) {
 			ballDpX *= -1;
@@ -174,6 +195,7 @@ internal void simulateGame(Input* input, float dt) {
 			ballPX = 0;
 			ballPY = 0;
 			player2Score++;
+			//playSfx(L"point.wav");
 		}
 
 		//draw score
@@ -181,6 +203,7 @@ internal void simulateGame(Input* input, float dt) {
 		for (int i = 0; i < player1Score; i++) {
 			drawRect(atX, 47.f, 1, 1, 0x450C1B);
 			atX += 2.5;
+			
 		}
 
 		atX = 80;
@@ -195,8 +218,11 @@ internal void simulateGame(Input* input, float dt) {
 	}
  else {
 	 //Menu
+	 
 		if (pressed(Button_Left) || pressed(Button_Right)) {
 			hotButton = !hotButton;
+			playSfx(L"button.wav");
+			
 		}
 
 		
@@ -204,6 +230,8 @@ internal void simulateGame(Input* input, float dt) {
 		if (pressed (Button_Enter)){
 			currentGameMode = GM_Game;
 			enemyIsAI = hotButton ? 0 : 1;
+			playSfx(L"select.wav");
+			playMusic(L"test.wav");
 		}
 		if (hotButton == 0) {
 			drawText("SINGLE PLAYER", -80, -10, 1, COLOR1);
@@ -213,6 +241,7 @@ internal void simulateGame(Input* input, float dt) {
 			drawText("SINGLE PLAYER", -80, -10, 1, COLOR5);
 			drawText("MULTIPLAYER", 20, -10, 1, COLOR1);
 		}
+
 		drawText("BEST GAME EVER", -60, 40, 1.5, COLOR5);
 		
 	}
